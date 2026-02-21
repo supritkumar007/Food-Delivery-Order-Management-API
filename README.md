@@ -110,16 +110,35 @@ Key guarantees:
 ---
 
 ## 🏗 System Architecture
++-----------------------+
+| Frontend |
+| (Next.js) |
++-----------+-----------+
+|
+v
++-----------------------+
+| Go Backend |
+| (Fiber API) |
++-----------+-----------+
+|
+v
++-----------------------+
+| Supabase PostgreSQL |
+| (Database + RLS) |
++-----------+-----------+
+|
+v
++-----------------------+
+| WebSocket Hub |
+| (Real-Time Updates) |
++-----------------------+
 
-Frontend (Next.js)  
-↓  
-Go Backend (Fiber)  
-↓  
-Supabase PostgreSQL  
-↓  
-WebSocket Hub (Real-time Updates)
 
-The frontend communicates via REST APIs and listens for order updates using WebSockets.
+### Flow Explanation
+Frontend communicates with Go Backend via REST APIs.  
+Backend handles business logic, state machine, and transactions.  
+Database ensures consistency and security using RLS.  
+WebSocket Hub pushes live order updates to users.
 
 ---
 
