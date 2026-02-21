@@ -37,3 +37,9 @@ backend/vendor/
 *.so
 *.dylib
 backend/internal/db/migrations/ (if you want to exclude local migrations)
+
+# Exclude specific files and folders
+supabase/
+database_readme.md
+database_update_readme.md
+README.md

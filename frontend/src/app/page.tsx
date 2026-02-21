@@ -1,107 +1,153 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { ShoppingBag, Truck, Utensils, Zap } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from "react";
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/home/Hero";
+import CategoryFilter from "@/components/home/CategoryFilter";
+import RestaurantCard from "@/components/home/RestaurantCard";
+import FoodItemCard from "@/components/home/FoodItemCard";
+import { motion } from "framer-motion";
 
-export default function LandingPage() {
+const MOCK_RESTAURANTS = [
+  {
+    id: "1",
+    name: "Pizza Palace",
+    address: "Downtown, Metro City",
+    rating: 4.5,
+    deliveryTime: "25-30 mins",
+    image: "",
+    categories: ["Pizza", "Italian"]
+  },
+  {
+    id: "2",
+    name: "Royal Biryani",
+    address: "Old Town, Metro City",
+    rating: 4.8,
+    deliveryTime: "30-40 mins",
+    image: "",
+    categories: ["Biryani", "North Indian"]
+  },
+  {
+    id: "3",
+    name: "Burger King",
+    address: "Mall Road, Metro City",
+    rating: 4.2,
+    deliveryTime: "15-20 mins",
+    image: "",
+    categories: ["Burgers", "Fast Food"]
+  }
+];
+
+const MOCK_FOOD = [
+  {
+    id: "101",
+    name: "Pepperoni Passion",
+    description: "Classic pepperoni with extra cheese and our signature sauce.",
+    price: 499,
+    isVeg: false,
+    image: "",
+    category: "Pizza"
+  },
+  {
+    id: "102",
+    name: "Paneer Tikka Pizza",
+    description: "Spiced paneer, capsicum, onion and tomatoes.",
+    price: 449,
+    isVeg: true,
+    image: "",
+    category: "Pizza"
+  },
+  {
+    id: "103",
+    name: "Chocolate Lava Cake",
+    description: "Goey chocolate centerpiece, perfectly baked.",
+    price: 129,
+    isVeg: true,
+    image: "",
+    category: "Dessert"
+  }
+];
+
+export default function Home() {
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-900 via-slate-950 to-orange-900/20">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay"></div>
+    <main className="min-h-screen pb-20">
+      <Navbar />
+      <Hero />
 
-        <div className="container mx-auto px-6 relative z-10 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-6xl md:text-8xl font-black mb-6 tracking-tight"
-          >
-            Swift<span className="text-orange-500">Bite</span>
-          </motion.h1>
+      <div className="container mx-auto px-4 py-16">
+        <section className="mb-24">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
+            <div>
+              <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2">
+                Popular <span className="text-orange-500 underline decoration-orange-500/30 underline-offset-8">Restaurants</span>
+              </h2>
+              <p className="text-slate-500 dark:text-slate-400">Handpicked favorites for your cravings</p>
+            </div>
+            <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
+          </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl text-slate-300 mb-10 max-w-2xl mx-auto"
-          >
-            Real-time delivery orchestration for the modern era. Premium, fast, and reliable.
-          </motion.p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {MOCK_RESTAURANTS.map((res) => (
+              <RestaurantCard key={res.id} restaurant={res} />
+            ))}
+          </div>
+        </section>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-col md:flex-row gap-4 justify-center"
-          >
-            <Link
-              href="/login"
-              className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-orange-500/20 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-            >
-              Get Started <Zap size={20} />
-            </Link>
-            <button className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold rounded-2xl border border-white/20 transition-all hover:scale-105 active:scale-95">
-              Explore Menu
+        <section>
+          <div className="flex items-center justify-between mb-12">
+            <div>
+              <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2">
+                Global <span className="text-orange-500 underline decoration-orange-500/30 underline-offset-8">Catalog</span>
+              </h2>
+              <p className="text-slate-500 dark:text-slate-400">Discover flavors from everywhere</p>
+            </div>
+            <button className="hidden md:flex items-center gap-2 text-orange-600 font-bold hover:gap-3 transition-all">
+              View all items <span className="text-xl">→</span>
             </button>
-          </motion.div>
-        </div>
+          </div>
 
-        {/* Floating Decorative Elements */}
-        <motion.div
-          animate={{ y: [0, -20, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-20 left-10 text-orange-400 hidden lg:block"
-        >
-          <Utensils size={100} strokeWidth={0.5} opacity={0.3} />
-        </motion.div>
-        <motion.div
-          animate={{ y: [0, 20, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-20 right-10 text-indigo-400 hidden lg:block"
-        >
-          <Truck size={120} strokeWidth={0.5} opacity={0.3} />
-        </motion.div>
-      </section>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            {MOCK_FOOD.map((food) => (
+              <FoodItemCard key={food.id} item={food} />
+            ))}
+          </div>
+        </section>
+      </div>
 
-      {/* Features Grid */}
-      <section className="py-24 bg-slate-950">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<Zap className="text-orange-500" />}
-              title="Real-Time Tracking"
-              description="Monitor your order from the kitchen to your doorstep with live WebSocket updates."
-            />
-            <FeatureCard
-              icon={<ShoppingBag className="text-indigo-500" />}
-              title="Multiple Roles"
-              description="Dedicated dashboards for Customers, Restaurants, and Drivers."
-            />
-            <FeatureCard
-              icon={<Truck className="text-green-500" />}
-              title="Fast Delivery"
-              description="Optimized routing and driver assignment for the quickest experience."
-            />
+      <footer className="mt-20 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 py-16">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            <div className="col-span-1 md:col-span-2">
+              <div className="font-bold text-3xl mb-6">Swift<span className="text-orange-500">Bite</span></div>
+              <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-6">
+                Redefining food delivery with real-time orchestration and premium experience.
+                Your favorite meals, delivered with speed and care.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-bold mb-4">Company</h4>
+              <nav className="flex flex-col space-y-2 text-slate-500 dark:text-slate-400">
+                <a href="#" className="hover:text-orange-500 transition-colors">About Us</a>
+                <a href="#" className="hover:text-orange-500 transition-colors">Contact</a>
+                <a href="#" className="hover:text-orange-500 transition-colors">Careers</a>
+              </nav>
+            </div>
+            <div>
+              <h4 className="font-bold mb-4">Help</h4>
+              <nav className="flex flex-col space-y-2 text-slate-500 dark:text-slate-400">
+                <a href="#" className="hover:text-orange-500 transition-colors">FAQ</a>
+                <a href="#" className="hover:text-orange-500 transition-colors">Privacy Policy</a>
+                <a href="#" className="hover:text-orange-500 transition-colors">Terms of Service</a>
+              </nav>
+            </div>
+          </div>
+          <div className="pt-8 border-t border-slate-200 dark:border-slate-800 text-center text-slate-500 text-sm">
+            © 2026 SwiftBite Technologies. All rights reserved.
           </div>
         </div>
-      </section>
-    </div>
-  );
-}
-
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
-  return (
-    <motion.div
-      whileHover={{ y: -10 }}
-      className="p-8 rounded-3xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition-colors group shadow-2xl"
-    >
-      <div className="mb-6 p-4 rounded-2xl bg-slate-800 w-fit group-hover:scale-110 transition-transform">
-        {icon}
-      </div>
-      <h3 className="text-2xl font-bold mb-4">{title}</h3>
-      <p className="text-slate-400 leading-relaxed">{description}</p>
-    </motion.div>
+      </footer>
+    </main>
   );
 }

@@ -9,15 +9,22 @@ export const metadata: Metadata = {
   description: "Experience the future of food delivery with real-time orchestration.",
 };
 
+import { ThemeProvider } from "@/context/ThemeContext";
+import { SocketProvider } from "@/context/SocketContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased bg-slate-950 text-white`}>
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased transition-colors duration-300`}>
+        <ThemeProvider>
+          <SocketProvider>
+            {children}
+          </SocketProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

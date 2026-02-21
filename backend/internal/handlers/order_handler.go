@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/yourusername/swiftbite/internal/models"
 	"github.com/yourusername/swiftbite/internal/services"
@@ -15,7 +15,7 @@ func NewOrderHandler(service *services.OrderService) *OrderHandler {
 	return &OrderHandler{service: service}
 }
 
-func (h *OrderHandler) GetOrder(c fiber.Ctx) error {
+func (h *OrderHandler) GetOrder(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
@@ -30,7 +30,7 @@ func (h *OrderHandler) GetOrder(c fiber.Ctx) error {
 	return c.JSON(order)
 }
 
-func (h *OrderHandler) UpdateStatus(c fiber.Ctx) error {
+func (h *OrderHandler) UpdateStatus(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
@@ -42,7 +42,7 @@ func (h *OrderHandler) UpdateStatus(c fiber.Ctx) error {
 		Version int                `json:"version"`
 	}
 
-	if err := c.Bind().JSON(&req); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
@@ -54,7 +54,7 @@ func (h *OrderHandler) UpdateStatus(c fiber.Ctx) error {
 	return c.JSON(order)
 }
 
-func (h *OrderHandler) AcceptOrder(c fiber.Ctx) error {
+func (h *OrderHandler) AcceptOrder(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
@@ -66,7 +66,7 @@ func (h *OrderHandler) AcceptOrder(c fiber.Ctx) error {
 		Version  int    `json:"version"`
 	}
 
-	if err := c.Bind().JSON(&req); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 

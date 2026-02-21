@@ -1,17 +1,25 @@
 package routes
 
 import (
-	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/contrib/websocket"
+	"github.com/gofiber/fiber/v2"
+	"github.com/yourusername/swiftbite/internal/config"
 	"github.com/yourusername/swiftbite/internal/handlers"
 	"github.com/yourusername/swiftbite/internal/middleware"
-	"github.com/yourusername/swiftbite/internal/config"
 	"github.com/yourusername/swiftbite/internal/sockets"
 )
 
-func SetupRoutes(app *fiber.App, cfg *config.Config, orderHandler *handlers.OrderHandler) {
+func SetupRoutes(
+	app *fiber.App,
+	cfg *config.Config,
+	orderHandler *handlers.OrderHandler,
+	cartHandler *handlers.CartHandler,
+	addressHandler *handlers.AddressHandler,
+	paymentHandler *handlers.PaymentHandler,
+	reviewHandler *handlers.ReviewHandler,
+) {
 	// Public routes
-	app.Get("/health", func(c fiber.Ctx) error {
+	app.Get("/health", func(c *fiber.Ctx) error {
 		return c.SendString("OK")
 	})
 
@@ -22,13 +30,35 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, orderHandler *handlers.Orde
 	orders := api.Group("/orders")
 	orders.Get("/:id", orderHandler.GetOrder)
 	orders.Patch("/:id/status", orderHandler.UpdateStatus)
-	orders.Post("/:id/accept", middleware.RoleMiddleware("DRIVER"), orderHandler.AcceptOrder)
+	orders.Post("/:id/accept", middleware.RoleMiddleware("DRIVER", "ADMIN"), orderHandler.AcceptOrder)
+
+	// Cart routes
+	cart := api.Group("/cart")
+	cart.Get("/", cartHandler.GetCart)
+	cart.Post("/add", cartHandler.AddToCart)
+	cart.Patch("/update", cartHandler.UpdateQuantity)
+	cart.Delete("/clear", cartHandler.ClearCart)
+
+	// Address routes
+	addresses := api.Group("/addresses")
+	addresses.Get("/", addressHandler.GetAddresses)
+	addresses.Post("/", addressHandler.CreateAddress)
+	addresses.Delete("/:id", addressHandler.DeleteAddress)
+
+	// Payment routes
+	payments := api.Group("/payments")
+	payments.Post("/process", paymentHandler.ProcessPayment)
+
+	// Review routes
+	reviews := api.Group("/reviews")
+	reviews.Post("/", reviewHandler.CreateReview)
+	reviews.Get("/restaurant/:id", reviewHandler.GetRestaurantReviews)
 
 	// WebSocket route
 	app.Get("/ws/orders/:id", websocket.New(func(c *websocket.Conn) {
 		orderID := c.Params("id")
 		sockets.GlobalHub.Register(orderID, c)
-		
+
 		defer func() {
 			sockets.GlobalHub.Unregister(orderID, c)
 			c.Close()

@@ -3,14 +3,14 @@ package middleware
 import (
 	"strings"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/rs/zerolog/log"
 	"github.com/yourusername/swiftbite/internal/config"
 )
 
 func AuthMiddleware(cfg *config.Config) fiber.Handler {
-	return func(c fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Missing authorization header"})
@@ -38,7 +38,7 @@ func AuthMiddleware(cfg *config.Config) fiber.Handler {
 
 		// Extract role and sub (user ID) from Supabase JWT claims
 		c.Locals("user_id", claims["sub"])
-		
+
 		// Supabase app_metadata or user_metadata might contain the role
 		if appMetadata, ok := claims["app_metadata"].(map[string]interface{}); ok {
 			if role, ok := appMetadata["role"].(string); ok {
@@ -50,10 +50,23 @@ func AuthMiddleware(cfg *config.Config) fiber.Handler {
 	}
 }
 
-func RoleMiddleware(requiredRole string) fiber.Handler {
-	return func(c fiber.Ctx) error {
-		role := c.Locals("role")
-		if role == nil || role.(string) != requiredRole {
+func RoleMiddleware(requiredRoles ...string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		roleObj := c.Locals("role")
+		if roleObj == nil {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Access denied: role not found"})
+		}
+
+		role := roleObj.(string)
+		isAuthorized := false
+		for _, r := range requiredRoles {
+			if role == r {
+				isAuthorized = true
+				break
+			}
+		}
+
+		if !isAuthorized {
 			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Access denied: insufficient permissions"})
 		}
 		return c.Next()
