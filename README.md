@@ -112,6 +112,7 @@ This ensures consistency, reliability, and production-grade behavior.
 ---
 
 ## 🏗 System Architecture
+```text
 Frontend (Next.js)
 ↓
 Go Backend (Fiber)
@@ -165,13 +166,14 @@ Each step updates the database and triggers real-time UI updates.
 ---
 
 ## 📂 Project Structure
+```bash
 swiftBite/
 │
 ├── backend-go/
-│ ├── cmd/
-│ ├── internal/
-│ ├── pkg/
-│ └── go.mod
+│   ├── cmd/
+│   ├── internal/
+│   ├── pkg/
+│   └── go.mod
 │
 ├── frontend/
 └── README.md
