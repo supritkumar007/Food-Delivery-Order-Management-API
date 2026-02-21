@@ -3,7 +3,7 @@
 
 <p align="center">
   <b>A production-inspired full-stack food delivery system built with Go, Next.js, and Supabase.</b><br/>
-  Designed to demonstrate backend architecture, concurrency control, real-time systems, and modern UI/UX.
+  ed to demonstrate backend architecture, concurrency control, real-time systems, and modern UI/UX.
 </p>
 
 ---
@@ -21,7 +21,7 @@ This project focuses on:
 - Supabase PostgreSQL with Row Level Security (RLS)
 - Modern, responsive UI with Light/Dark mode support
 
-It is built as a **placement-oriented system design project**, not just a CRUD application.
+It is built as a **placement-oriented system  project**, not just a CRUD application.
 
 ---
 
@@ -106,7 +106,7 @@ This ensures consistency, reliability, and production-grade behavior.
 - Optimistic locking strategy
 - Real-time updates via WebSockets
 - Supabase Row Level Security
-- Fully responsive design
+- Fully responsive 
 - Light/Dark theme toggle with persistent preference
 
 ---
@@ -148,7 +148,7 @@ Each step updates the database and triggers real-time UI updates.
 - Toast notifications
 - Skeleton loaders
 - Sticky navigation
-- Responsive mobile-first design
+- Responsive mobile-first 
 - Light/Dark theme support
 
 ---
@@ -181,9 +181,9 @@ flowchart TD
 
 ---
 
-## 🧠 Design Summary
+## 🧠  Summary
 
-SwiftBite was designed with the following principles:
+SwiftBite was ed with the following principles:
 
 - Clear separation of concerns
 - Strict state management
@@ -192,4 +192,4 @@ SwiftBite was designed with the following principles:
 - Real-world food-commerce UX
 - Production-inspired system modeling
 
-This project demonstrates understanding of system design, distributed workflow coordination, and full-stack integration.
+This project demonstrates understanding of system , distributed workflow coordination, and full-stack integration.
