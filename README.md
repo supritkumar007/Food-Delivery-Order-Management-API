@@ -165,16 +165,19 @@ Each step updates the database and triggers real-time UI updates.
 ---
 
 ## 📂 Project Structure
-swiftBite/
-│
-├── backend-go/
-│   ├── cmd/
-│   ├── internal/
-│   ├── pkg/
-│   └── go.mod
-│
-├── frontend/
-└── README.md
+```mermaid
+flowchart TD
+    A[swiftBite]
+    A --> B[backend-go]
+    B --> B1[cmd]
+    B --> B2[internal]
+    B --> B3[pkg]
+    B --> B4[go.mod]
+
+    A --> C[frontend]
+    A --> D[supabase]
+    A --> E[database_readme.md]
+    A --> F[README.md]
 
 ---
 
