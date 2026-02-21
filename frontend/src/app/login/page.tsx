@@ -30,20 +30,55 @@ export default function Login() {
             return;
         }
 
-        // Role-based redirect
-        const { data: userData } = await supabase
-            .from("users")
-            .select("role")
-            .eq("id", data.user.id)
-            .single();
+        if (!data.user) {
+            setError("Login failed. Please try again.");
+            setLoading(false);
+            return;
+        }
+
+        // Role-based redirect - try multiple times to ensure data is loaded
+        let attempts = 0;
+        const maxAttempts = 3;
+        let userData = null;
+
+        while (attempts < maxAttempts && !userData) {
+            const { data: userDataResult, error: userError } = await supabase
+                .from("users")
+                .select("role")
+                .eq("id", data.user.id)
+                .single();
+
+            if (userDataResult) {
+                userData = userDataResult;
+                break;
+            }
+
+            if (userError) {
+                console.error("Error fetching user role:", userError);
+            }
+
+            attempts++;
+            if (attempts < maxAttempts) {
+                await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms before retry
+            }
+        }
 
         const role = userData?.role || "CUSTOMER";
 
+        console.log("User role:", role); // Debug log
+
         switch (role) {
-            case "RESTAURANT": window.location.href = "/restaurant/dashboard"; break;
-            case "DRIVER": window.location.href = "/driver/dashboard"; break;
-            case "ADMIN": window.location.href = "/admin/dashboard"; break;
-            default: window.location.href = "/customer/dashboard";
+            case "RESTAURANT": 
+                window.location.href = "/restaurant/dashboard"; 
+                break;
+            case "DRIVER": 
+                window.location.href = "/driver/dashboard"; 
+                break;
+            case "ADMIN": 
+                window.location.href = "/admin/dashboard"; 
+                break;
+            default: 
+                window.location.href = "/customer/dashboard";
         }
     };
 

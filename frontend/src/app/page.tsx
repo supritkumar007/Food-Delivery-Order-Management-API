@@ -1,80 +1,76 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/home/Hero";
 import CategoryFilter from "@/components/home/CategoryFilter";
 import RestaurantCard from "@/components/home/RestaurantCard";
 import FoodItemCard from "@/components/home/FoodItemCard";
 import { motion } from "framer-motion";
-
-const MOCK_RESTAURANTS = [
-  {
-    id: "1",
-    name: "Pizza Palace",
-    address: "Downtown, Metro City",
-    rating: 4.5,
-    deliveryTime: "25-30 mins",
-    image: "",
-    categories: ["Pizza", "Italian"]
-  },
-  {
-    id: "2",
-    name: "Royal Biryani",
-    address: "Old Town, Metro City",
-    rating: 4.8,
-    deliveryTime: "30-40 mins",
-    image: "",
-    categories: ["Biryani", "North Indian"]
-  },
-  {
-    id: "3",
-    name: "Burger King",
-    address: "Mall Road, Metro City",
-    rating: 4.2,
-    deliveryTime: "15-20 mins",
-    image: "",
-    categories: ["Burgers", "Fast Food"]
-  }
-];
-
-const MOCK_FOOD = [
-  {
-    id: "101",
-    name: "Pepperoni Passion",
-    description: "Classic pepperoni with extra cheese and our signature sauce.",
-    price: 499,
-    isVeg: false,
-    image: "",
-    category: "Pizza"
-  },
-  {
-    id: "102",
-    name: "Paneer Tikka Pizza",
-    description: "Spiced paneer, capsicum, onion and tomatoes.",
-    price: 449,
-    isVeg: true,
-    image: "",
-    category: "Pizza"
-  },
-  {
-    id: "103",
-    name: "Chocolate Lava Cake",
-    description: "Goey chocolate centerpiece, perfectly baked.",
-    price: 129,
-    isVeg: true,
-    image: "",
-    category: "Dessert"
-  }
-];
+import { supabase } from "@/lib/supabase";
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showVegOnly, setShowVegOnly] = useState(false);
+  const [restaurants, setRestaurants] = useState<any[]>([]);
+  const [foodItems, setFoodItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      // Fetch restaurants
+      const { data: restaurantsData } = await supabase
+        .from("restaurants")
+        .select("*")
+        .eq("is_active", true);
+
+      // Fetch menu items with restaurant info
+      const { data: menuItemsData } = await supabase
+        .from("menu_items")
+        .select(`
+          *,
+          menu:menus(
+            restaurant:restaurants(id, name)
+          )
+        `)
+        .eq("is_available", true);
+
+      setRestaurants(restaurantsData || []);
+      setFoodItems(menuItemsData || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter restaurants by category
+  const filteredRestaurants = restaurants.filter(restaurant => {
+    if (selectedCategory === "all") return true;
+    // Match restaurant name or check if they have items in this category
+    return restaurant.name.toLowerCase().includes(selectedCategory.toLowerCase());
+  });
+
+  // Filter food items by category, search, and veg preference
+  const filteredFood = foodItems.filter(food => {
+    const matchesCategory = selectedCategory === "all" || 
+      (food.category && food.category.toLowerCase() === selectedCategory.toLowerCase());
+    const matchesSearch = food.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (food.description && food.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesVeg = !showVegOnly || food.is_veg;
+    
+    return matchesCategory && matchesSearch && matchesVeg;
+  });
 
   return (
     <main className="min-h-screen pb-20">
       <Navbar />
-      <Hero />
+      <Hero onSearch={setSearchQuery} />
 
       <div className="container mx-auto px-4 py-16">
         <section className="mb-24">
@@ -89,29 +85,75 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {MOCK_RESTAURANTS.map((res) => (
-              <RestaurantCard key={res.id} restaurant={res} />
-            ))}
+            {loading ? (
+              <div className="col-span-full text-center py-12 text-slate-500">
+                Loading restaurants...
+              </div>
+            ) : filteredRestaurants.length > 0 ? (
+              filteredRestaurants.map((res) => (
+                <RestaurantCard key={res.id} restaurant={{
+                  id: res.id,
+                  name: res.name,
+                  address: res.address,
+                  rating: res.rating,
+                  deliveryTime: "25-35 mins",
+                  image: "",
+                  categories: []
+                }} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12 text-slate-500">
+                No restaurants found for this category
+              </div>
+            )}
           </div>
         </section>
 
         <section>
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
             <div>
               <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2">
                 Global <span className="text-orange-500 underline decoration-orange-500/30 underline-offset-8">Catalog</span>
               </h2>
               <p className="text-slate-500 dark:text-slate-400">Discover flavors from everywhere</p>
             </div>
-            <button className="hidden md:flex items-center gap-2 text-orange-600 font-bold hover:gap-3 transition-all">
-              View all items <span className="text-xl">→</span>
+            <button
+              onClick={() => setShowVegOnly(!showVegOnly)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all border-2 ${
+                showVegOnly
+                  ? 'bg-green-500 text-white border-green-500 shadow-lg shadow-green-500/30'
+                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-green-500'
+              }`}
+            >
+              <div className={`w-4 h-4 border-2 flex items-center justify-center rounded-sm ${showVegOnly ? 'border-white' : 'border-green-600'}`}>
+                <div className={`w-1.5 h-1.5 rounded-full ${showVegOnly ? 'bg-white' : 'bg-green-600'}`} />
+              </div>
+              <span>Veg Only</span>
             </button>
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            {MOCK_FOOD.map((food) => (
-              <FoodItemCard key={food.id} item={food} />
-            ))}
+            {loading ? (
+              <div className="col-span-full text-center py-12 text-slate-500">
+                Loading menu items...
+              </div>
+            ) : filteredFood.length > 0 ? (
+              filteredFood.map((food) => (
+                <FoodItemCard key={food.id} item={{
+                  id: food.id,
+                  name: food.name,
+                  description: food.description || "",
+                  price: parseFloat(food.price),
+                  isVeg: food.is_veg,
+                  image: food.image_url || "",
+                  category: food.category || ""
+                }} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12 text-slate-500">
+                No items found matching your criteria
+              </div>
+            )}
           </div>
         </section>
       </div>

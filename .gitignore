@@ -38,8 +38,6 @@ backend/vendor/
 *.dylib
 backend/internal/db/migrations/ (if you want to exclude local migrations)
 
-# Exclude specific files and folders
+# Exclude all markdown files and supabase folder
+*.md
 supabase/
-database_readme.md
-database_update_readme.md
-README.md

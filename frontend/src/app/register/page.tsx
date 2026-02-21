@@ -7,7 +7,6 @@ import { supabase } from "@/lib/supabase";
 import { Mail, Lock, User, Phone, Utensils, Truck, UserCircle } from "lucide-react";
 
 export default function Register() {
-    const [role, setRole] = useState<"CUSTOMER" | "RESTAURANT" | "DRIVER">("CUSTOMER");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -22,26 +21,36 @@ export default function Register() {
         const fullName = formData.get("fullName") as string;
         const phone = formData.get("phone") as string;
 
-        const { data, error: authError } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: {
-                    full_name: fullName,
-                    role,
-                    phone,
+        try {
+            const { data, error: authError } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        full_name: fullName,
+                        role: "CUSTOMER",
+                        phone,
+                    }
                 }
+            });
+
+            if (authError) {
+                setError(authError.message);
+                setLoading(false);
+                return;
             }
-        });
 
-        if (authError) {
-            setError(authError.message);
+            // The trigger will automatically create the user record
+            // Wait a moment for it to process
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Success - redirect to login
             setLoading(false);
-            return;
+            window.location.href = "/login?registered=true";
+        } catch (err: any) {
+            setError(err.message || "An error occurred during signup");
+            setLoading(false);
         }
-
-        // Success - redirect based on role or show message
-        window.location.href = "/login?registered=true";
     };
 
     return (
@@ -64,33 +73,6 @@ export default function Register() {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-3 gap-3 mb-6">
-                        <button
-                            type="button"
-                            onClick={() => setRole("CUSTOMER")}
-                            className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all ${role === "CUSTOMER" ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 text-orange-600' : 'border-slate-100 dark:border-slate-800 text-slate-500'}`}
-                        >
-                            <UserCircle className="w-6 h-6" />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Customer</span>
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setRole("RESTAURANT")}
-                            className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all ${role === "RESTAURANT" ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 text-orange-600' : 'border-slate-100 dark:border-slate-800 text-slate-500'}`}
-                        >
-                            <Utensils className="w-6 h-6" />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Restaurant</span>
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setRole("DRIVER")}
-                            className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all ${role === "DRIVER" ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 text-orange-600' : 'border-slate-100 dark:border-slate-800 text-slate-500'}`}
-                        >
-                            <Truck className="w-6 h-6" />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Driver</span>
-                        </button>
-                    </div>
-
                     <div className="space-y-4">
                         <div className="relative">
                             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />

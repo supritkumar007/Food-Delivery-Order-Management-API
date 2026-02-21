@@ -4,10 +4,26 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Search, MapPin } from "lucide-react";
 import Image from "next/image";
 
-export default function Hero() {
+interface HeroProps {
+    onSearch?: (query: string) => void;
+}
+
+export default function Hero({ onSearch }: HeroProps) {
     const { scrollY } = useScroll();
     const y1 = useTransform(scrollY, [0, 500], [0, 200]);
     const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+    
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const query = formData.get("search") as string;
+        if (onSearch) {
+            onSearch(query);
+        }
+        // Scroll to catalog section
+        const catalogSection = document.querySelector('section:last-of-type');
+        catalogSection?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     return (
         <section className="relative min-h-[85vh] flex items-center overflow-hidden pt-20">
@@ -36,20 +52,21 @@ export default function Hero() {
                             </p>
 
                             {/* Search Bar */}
-                            <div className="max-w-2xl bg-white dark:bg-slate-900 p-2 rounded-2xl shadow-2xl flex flex-col md:flex-row items-center gap-2 border border-slate-200 dark:border-slate-800">
+                            <form onSubmit={handleSearch} className="max-w-2xl bg-white dark:bg-slate-900 p-2 rounded-2xl shadow-2xl flex flex-col md:flex-row items-center gap-2 border border-slate-200 dark:border-slate-800">
                                 <div className="flex-1 flex items-center px-4 gap-2 w-full">
-                                    <MapPin className="text-orange-500 w-5 h-5 shrink-0" />
+                                    <Search className="text-orange-500 w-5 h-5 shrink-0" />
                                     <input
                                         type="text"
-                                        placeholder="Enter your delivery address"
+                                        name="search"
+                                        placeholder="Search for food, restaurants..."
                                         className="w-full py-3 bg-transparent border-none focus:outline-none text-slate-900 dark:text-white"
                                     />
                                 </div>
-                                <button className="w-full md:w-auto btn-primary flex items-center justify-center gap-2">
+                                <button type="submit" className="w-full md:w-auto btn-primary flex items-center justify-center gap-2">
                                     <Search className="w-5 h-5" />
                                     Find Food
                                 </button>
-                            </div>
+                            </form>
 
                             <div className="mt-8 flex items-center justify-center lg:justify-start space-x-8 text-sm text-slate-500 dark:text-slate-400 font-medium">
                                 <div className="flex items-center space-x-2">
