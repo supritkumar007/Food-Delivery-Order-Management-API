@@ -1,9 +1,23 @@
+
+So GitHub tries to interpret the next markdown (`--- ## 🧠 Summary`) as part of the Mermaid diagram, which causes the **Lexical error**.
+
+---
+
+# ✅ FIXED & CLEAN README CONTENT
+
+Below is your corrected, polished, and GitHub-safe README file content.
+
+You can directly replace your entire README with this.
+
+---
+
+```markdown
 # 🍔 SwiftBite  
 ### Real-Time Food Delivery Orchestration Platform
 
 <p align="center">
   <b>A production-inspired full-stack food delivery system built with Go, Next.js, and Supabase.</b><br/>
-  ed to demonstrate backend architecture, concurrency control, real-time systems, and modern UI/UX.
+  Designed to demonstrate backend architecture, concurrency control, real-time systems, and modern UI/UX.
 </p>
 
 ---
@@ -21,7 +35,7 @@ This project focuses on:
 - Supabase PostgreSQL with Row Level Security (RLS)
 - Modern, responsive UI with Light/Dark mode support
 
-It is built as a **placement-oriented system  project**, not just a CRUD application.
+It is built as a **placement-oriented system design project**, not just a CRUD application.
 
 ---
 
@@ -31,8 +45,8 @@ It is built as a **placement-oriented system  project**, not just a CRUD applica
 - Next.js (App Router)
 - TypeScript
 - Tailwind CSS (Light/Dark Theme)
-- Framer Motion (Animations)
-- React Query (Data fetching & caching)
+- Framer Motion
+- React Query
 
 ### Backend
 - Go (Golang)
@@ -51,7 +65,7 @@ It is built as a **placement-oriented system  project**, not just a CRUD applica
 
 ## 👥 Role-Based System
 
-SwiftBite supports four distinct roles, each with dedicated dashboards and permissions.
+SwiftBite supports four distinct roles with dedicated dashboards.
 
 ### 🧑 Customer
 - Browse restaurants & food catalog (public access before login)
@@ -59,12 +73,12 @@ SwiftBite supports four distinct roles, each with dedicated dashboards and permi
 - Add to cart & checkout
 - Simulated payment
 - Real-time order tracking
-- View order history & rate services
+- Order history & ratings
 
 ### 🏪 Restaurant
 - Manage menu (Create / Update / Delete)
 - Accept & update order status
-- View earnings and order analytics
+- View earnings & analytics
 
 ### 🚚 Driver
 - View available delivery requests
@@ -73,28 +87,26 @@ SwiftBite supports four distinct roles, each with dedicated dashboards and permi
 - Track earnings
 
 ### 🛠 Admin
-- Monitor orders across platform
+- Monitor platform orders
 - Manage users & restaurants
-- View system analytics
+- View analytics
 
 ---
 
 ## 🔄 Order Lifecycle (State Machine)
 
 Orders follow a strictly enforced transition model:
-PENDING → CONFIRMED → PREPARING → READY → PICKED_UP → DELIVERED
 
-or
-PENDING → CANCELLED
+PENDING → CONFIRMED → PREPARING → READY → PICKED_UP → DELIVERED  
+or  
+PENDING → CANCELLED  
 
-Key properties:
+Key guarantees:
 
 - Invalid transitions are rejected at backend level
 - All transitions are logged in `order_status_logs`
-- Updates are wrapped inside database transactions
+- Updates are wrapped in database transactions
 - Status changes are broadcast in real-time via WebSocket
-
-This ensures consistency, reliability, and production-grade behavior.
 
 ---
 
@@ -106,18 +118,19 @@ This ensures consistency, reliability, and production-grade behavior.
 - Optimistic locking strategy
 - Real-time updates via WebSockets
 - Supabase Row Level Security
-- Fully responsive 
+- Fully responsive UI
 - Light/Dark theme toggle with persistent preference
 
 ---
 
 ## 🏗 System Architecture
-Frontend (Next.js)
-↓
-Go Backend (Fiber)
-↓
-Supabase PostgreSQL
-↓
+
+Frontend (Next.js)  
+↓  
+Go Backend (Fiber)  
+↓  
+Supabase PostgreSQL  
+↓  
 WebSocket Hub (Real-time Updates)
 
 The frontend communicates via REST APIs and listens for order updates using WebSockets.
@@ -126,12 +139,12 @@ The frontend communicates via REST APIs and listens for order updates using WebS
 
 ## 🛒 End-to-End User Flow
 
-1. User browses restaurants (no login required)
-2. Adds items to cart
-3. Redirected to login/register on checkout
+1. Browse restaurants (no login required)
+2. Add items to cart
+3. Redirect to login/register on checkout
 4. Payment simulation
 5. Order created (PENDING)
-6. Restaurant confirms and prepares
+6. Restaurant confirms & prepares
 7. Driver accepts delivery
 8. Order delivered with live tracking
 
@@ -148,7 +161,7 @@ Each step updates the database and triggers real-time UI updates.
 - Toast notifications
 - Skeleton loaders
 - Sticky navigation
-- Responsive mobile-first 
+- Mobile-first responsive design
 - Light/Dark theme support
 
 ---
@@ -165,6 +178,7 @@ Each step updates the database and triggers real-time UI updates.
 ---
 
 ## 📂 Project Structure
+
 ```mermaid
 flowchart TD
     A[swiftBite]
@@ -179,11 +193,9 @@ flowchart TD
     A --> E[database_readme.md]
     A --> F[README.md]
 
----
-
 ## 🧠  Summary
 
-SwiftBite was ed with the following principles:
+SwiftBite was designed with the following principles:
 
 - Clear separation of concerns
 - Strict state management
