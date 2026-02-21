@@ -1,142 +1,192 @@
-🍔 SwiftBite
-Real-Time Food Delivery Orchestration Platform
+# 🍔 SwiftBite  
+### Real-Time Food Delivery Orchestration Platform
 
-SwiftBite is a full-stack food delivery application inspired by platforms like Swiggy and Zomato.
-It is built to demonstrate backend engineering, system design, concurrency handling, and modern UI/UX.
+<p align="center">
+  <b>A production-inspired full-stack food delivery system built with Go, Next.js, and Supabase.</b><br/>
+  Designed to demonstrate backend architecture, concurrency control, real-time systems, and modern UI/UX.
+</p>
 
-🚀 Tech Stack
+---
 
-Frontend
+## 🚀 Overview
 
-Next.js + TypeScript
+SwiftBite is a scalable, role-based food delivery platform inspired by applications like Swiggy and Zomato.
 
-Tailwind CSS (Light/Dark Mode)
+This project focuses on:
 
-Framer Motion
+- Clean backend architecture (Go + Fiber)
+- Strict order lifecycle state machine
+- Concurrency-safe operations
+- Real-time order tracking via WebSockets
+- Supabase PostgreSQL with Row Level Security (RLS)
+- Modern, responsive UI with Light/Dark mode support
 
-React Query
+It is built as a **placement-oriented system design project**, not just a CRUD application.
 
-Backend
+---
 
-Go (Golang)
+## 🛠 Tech Stack
 
-Fiber framework
+### Frontend
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS (Light/Dark Theme)
+- Framer Motion (Animations)
+- React Query (Data fetching & caching)
 
-GORM ORM
+### Backend
+- Go (Golang)
+- Fiber framework
+- GORM ORM
+- JWT Authentication (Supabase)
+- WebSocket for live updates
 
-WebSockets (Real-time updates)
+### Database
+- Supabase PostgreSQL
+- Row Level Security (RLS)
+- Transactions & Foreign Keys
+- Indexed queries for performance
 
-Database
+---
 
-Supabase PostgreSQL
+## 👥 Role-Based System
 
-Row Level Security (RLS)
+SwiftBite supports four distinct roles, each with dedicated dashboards and permissions.
 
-Transactions & Constraints
+### 🧑 Customer
+- Browse restaurants & food catalog (public access before login)
+- Veg / Non-Veg filter
+- Add to cart & checkout
+- Simulated payment
+- Real-time order tracking
+- View order history & rate services
 
-👥 User Roles
+### 🏪 Restaurant
+- Manage menu (Create / Update / Delete)
+- Accept & update order status
+- View earnings and order analytics
 
-SwiftBite supports four role-based dashboards:
+### 🚚 Driver
+- View available delivery requests
+- Accept delivery (concurrency-safe)
+- Update pickup & delivery status
+- Track earnings
 
-🧑 Customer
+### 🛠 Admin
+- Monitor orders across platform
+- Manage users & restaurants
+- View system analytics
 
-Browse restaurants & food catalog (before login)
+---
 
-Veg / Non-Veg filtering
+## 🔄 Order Lifecycle (State Machine)
 
-Add to cart & checkout
-
-Simulated payment
-
-Real-time order tracking
-
-Order history & ratings
-
-🏪 Restaurant
-
-Manage menu (CRUD)
-
-Accept & update order status
-
-View revenue & analytics
-
-🚚 Driver
-
-View available deliveries
-
-Accept order (concurrency-safe)
-
-Update delivery status
-
-View earnings
-
-🛠 Admin
-
-Monitor platform
-
-Manage users & restaurants
-
-View analytics
-
-🔄 Order Lifecycle (State Machine)
-
-Orders follow a strict transition model:
-
+Orders follow a strictly enforced transition model:
 PENDING → CONFIRMED → PREPARING → READY → PICKED_UP → DELIVERED
-(or CANCELLED)
 
-Invalid transitions are blocked at backend level.
-All updates are logged and broadcast in real-time.
+or
+PENDING → CANCELLED
 
-⚙️ Key Engineering Highlights
+Key properties:
 
-Role-based access control (JWT)
+- Invalid transitions are rejected at backend level
+- All transitions are logged in `order_status_logs`
+- Updates are wrapped inside database transactions
+- Status changes are broadcast in real-time via WebSocket
 
-Concurrency-safe order acceptance
+This ensures consistency, reliability, and production-grade behavior.
 
-Optimistic locking
+---
 
-Database transactions
+## ⚙️ Engineering Highlights
 
-WebSocket live tracking
+- Clean Architecture (Handler → Service → Repository pattern)
+- JWT-based role authorization
+- Concurrency-safe order assignment
+- Optimistic locking strategy
+- Real-time updates via WebSockets
+- Supabase Row Level Security
+- Fully responsive design
+- Light/Dark theme toggle with persistent preference
 
-Light/Dark theme toggle
+---
 
-Fully responsive UI
-
-Clean architecture (Handler → Service → Repository)
-
-🏗 System Architecture
-
+## 🏗 System Architecture
 Frontend (Next.js)
-⬇
+↓
 Go Backend (Fiber)
-⬇
+↓
 Supabase PostgreSQL
-⬇
-WebSocket Hub (Live Updates)
+↓
+WebSocket Hub (Real-time Updates)
 
-🛒 End-to-End Flow
+The frontend communicates via REST APIs and listens for order updates using WebSockets.
 
-Browse → Add to Cart → Checkout → Payment →
-Restaurant Confirms → Driver Delivers → Real-time Tracking → Completion
+---
 
-📌 Why This Project Matters
+## 🛒 End-to-End User Flow
 
-This project demonstrates:
+1. User browses restaurants (no login required)
+2. Adds items to cart
+3. Redirected to login/register on checkout
+4. Payment simulation
+5. Order created (PENDING)
+6. Restaurant confirms and prepares
+7. Driver accepts delivery
+8. Order delivered with live tracking
 
-Full-stack engineering
+Each step updates the database and triggers real-time UI updates.
 
-Backend architecture design
+---
 
-State machine modeling
+## 🌗 UI & UX Features
 
-Concurrency handling
+- Food-delivery inspired layout
+- Parallax hero section
+- Glassmorphism cards
+- Smooth hover & click animations
+- Toast notifications
+- Skeleton loaders
+- Sticky navigation
+- Responsive mobile-first design
+- Light/Dark theme support
 
-Secure role-based systems
+---
 
-Real-time communication
+## 🔐 Security & Reliability
 
-Production-ready UI/UX
+- Role-based route protection
+- JWT validation middleware
+- Input validation & DTO enforcement
+- Database transactions for critical operations
+- Concurrency-safe driver assignment
+- Row Level Security policies in Supabase
 
-It goes beyond a simple CRUD application and focuses on real-world system design concepts.
+---
+
+## 📂 Project Structure
+swiftBite/
+│
+├── backend-go/
+│ ├── cmd/
+│ ├── internal/
+│ ├── pkg/
+│ └── go.mod
+│
+├── frontend/
+└── README.md
+
+---
+
+## 🧠 Design Summary
+
+SwiftBite was designed with the following principles:
+
+- Clear separation of concerns
+- Strict state management
+- Scalable backend logic
+- Secure role-based operations
+- Real-world food-commerce UX
+- Production-inspired system modeling
+
+This project demonstrates understanding of system design, distributed workflow coordination, and full-stack integration.
