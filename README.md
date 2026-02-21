@@ -1,17 +1,3 @@
-
-So GitHub tries to interpret the next markdown (`--- ## 🧠 Summary`) as part of the Mermaid diagram, which causes the **Lexical error**.
-
----
-
-# ✅ FIXED & CLEAN README CONTENT
-
-Below is your corrected, polished, and GitHub-safe README file content.
-
-You can directly replace your entire README with this.
-
----
-
-```markdown
 # 🍔 SwiftBite  
 ### Real-Time Food Delivery Orchestration Platform
 
